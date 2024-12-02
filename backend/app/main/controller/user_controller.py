@@ -70,6 +70,25 @@ def delete_user() -> Tuple[Response, int]:
             return ret_500()
     return ret_500()
 
+@cross_origin()
+@user_bp.route('/get', methods=['POST'])
+def get_user() -> Tuple[Response, int]:
+    auth_header = request.headers.get('Authorization')
+    if auth_header and auth_header.startswith("Bearer "):
+        token = auth_header.split(" ")[1]
+    else:
+        return ret_400()
+
+    with current_app.app_context():
+        user_service: UserService = current_app.extensions['user_service']
+        try:
+            user = user_service.find_by_token(token)
+            if user is None:
+                return ret_401()
+            return jsonify({"username": user.username, "access_token": user.access_token}), 200
+        except Exception as e:
+            current_app.logger.error(e)
+            return ret_500()
 
 
 
