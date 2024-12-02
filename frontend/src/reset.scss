@@ -1,0 +1,29 @@
+@use 'style/components.scss';
+@use 'style/utils.scss';
+@use 'style/var.scss';
+@use 'style/main.scss';
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+    font-family: 'Roboto Mono';
+
+    background-color: var.$bg;
+    color: var.$fg;
+    fill: var.$fg;
+}
+
+
+@media (max-width: 768px) {
+    :root {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        font-size: 12px; 
+    }
+}

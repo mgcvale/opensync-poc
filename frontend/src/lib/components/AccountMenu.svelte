@@ -1,0 +1,79 @@
+<script lang='ts'>
+    import { userStore, type UserData } from "$lib/stores/userStore";
+    import Dropdown from "./Dropdown.svelte";
+
+    let open: boolean = $state(false);
+
+</script>
+
+{#snippet rows(className: string)}
+    {#if $userStore.loggedIn}
+        <a id="logout">Log out</a>
+    {:else}
+        <a href="/user/register" id="create-account">Create account</a>
+        <a href="/user/login" id="login">Log in</a>
+    {/if}
+{/snippet}
+
+{#snippet opener()}
+    <span class="opener">
+        Account
+        <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" stroke="currentColor" fill="currentColor" width="512" height="298" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" clip-rule="evenodd" viewBox="0 0 512 298.04">
+            <path d="M12.08 70.78c-16.17-16.24-16.09-42.54.15-58.7 16.25-16.17 42.54-16.09 58.71.15L256 197.76 441.06 12.23c16.17-16.24 42.46-16.32 58.71-.15 16.24 16.16 16.32 42.46.15 58.7L285.27 285.96c-16.24 16.17-42.54 16.09-58.7-.15L12.08 70.78z"/>
+        </svg>
+    </span>
+{/snippet}
+
+<Dropdown
+    {open}
+    class="account-menu-dropdown"
+    itemsSnippet={rows}
+    openerSnippet={opener}
+></Dropdown>
+
+<style lang="scss">
+    @use '/src/style/var.scss';
+
+    :global(.account-menu-dropdown) {
+        border: none;
+        background: transparent;
+        white-space: nowrap;
+        width: auto;
+        direction: rtl;
+    
+        :global(.opener) {
+            display: flex;
+            font-size: 1.5em;
+            padding-right: .2em;
+            gap: .5em;
+            direction: ltr;
+            @media (max-width: 768px) {
+                font-size: 1.25em;
+            }
+            :global(svg) {
+                width: 1.3em;
+                height: 1.5em;
+                padding: .2em;
+            }
+        }
+        
+        :global(.dropdown-content) {
+            border-radius: 12px;
+            border: 2px solid var.$content-border;
+            :global(a) {cursor: pointer;
+                padding: .5em .7em;
+                border-radius: 6px;
+
+                &:hover {
+                    background-color: rgba(0, 0, 0, 0.6);
+                }
+
+                @media (max-width: 768px) {
+                    text-decoration: underline;
+                }
+            }
+            background-color: transparent;
+        }    
+    }
+
+</style>

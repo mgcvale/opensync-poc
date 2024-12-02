@@ -1,21 +1,11 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-    import { userStore, type UserData } from "$lib/stores/userStore";
-    import { UserService } from "$lib/userService";
-    import AccountMenu from "$lib/components/AccountMenu.svelte";
     import '/src/reset.scss';
     import '/src/style/scrollless.scss';
+    import { userStore, type UserData } from '$lib/stores/userStore';
 
-    const userService = new UserService();
+    let { data } = $props();
+    let mode = data.slug;
 
-    onMount(async () => {
-        try {
-            let userData = await userService.getDataFromCookie();
-            userStore.set(userData);
-        } catch (e) {
-            console.log("User not loaded from cookie!");
-        }
-    });
 </script>
 
 <header>
@@ -32,12 +22,20 @@
         </a>
         <span>/</span>
         <h2>
-            Dashboard
+            Account
         </h2>
+        <span>/</span>
+        <h2>
+            {mode}
+        </h2>        
     </div>
-    <AccountMenu></AccountMenu>
+    <a href="/">
+        &lt;- Back to Dashboard
+    </a>
 </header>
 
-<style lang="scss">
-    
-</style>
+<main class="floating-content-container">
+    <div class="floating-content">
+        <h2>{mode}</h2>
+    </div>
+</main>
