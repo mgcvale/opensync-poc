@@ -29,7 +29,7 @@ def create_user() -> Tuple[Response, int]:
             user = user_service.create_user(username, password)
         except IntegrityError or FileExistsError:
             return ret_409()
-        return jsonify({"message": "SUCCESS", "access_token": user.access_token}), 200
+        return jsonify({"message": "SUCCESS", "accessToken": user.access_token}), 200
     return ret_500()
 
 @cross_origin()
@@ -48,7 +48,7 @@ def get_token() -> Tuple[Response, int]:
         token = user_service.get_token(username, password)
         if token is None:
             return ret_401()
-        return jsonify({"message": "SUCCESS", "access_token": token}), 200
+        return jsonify({"message": "SUCCESS", "accessToken": token}), 200
     return ret_500()
 
 @cross_origin()
@@ -85,7 +85,7 @@ def get_user() -> Tuple[Response, int]:
             user = user_service.find_by_token(token)
             if user is None:
                 return ret_401()
-            return jsonify({"username": user.username, "access_token": user.access_token}), 200
+            return jsonify({"username": user.username, "accessToken": user.access_token}), 200
         except Exception as e:
             current_app.logger.error(e)
             return ret_500()
