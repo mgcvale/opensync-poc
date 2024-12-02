@@ -1,16 +1,18 @@
 import { writable } from "svelte/store";
 
 export interface UserData {
-    accessToken: string | null,
-    username: string | null
+    accessToken: string,
+    username: string,
+    loggedIn: boolean
 }
 
 export interface LoginData {
-    username: string | null,
-    password: string | null
+    username: string,
+    password: string
 }
 
 export const userStore = writable<UserData>({
-    accessToken: null,
-    username: null
+    accessToken: "",
+    username: "",
+    loggedIn: false
 })
