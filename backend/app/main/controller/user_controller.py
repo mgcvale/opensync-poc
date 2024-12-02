@@ -13,8 +13,9 @@ user_bp = Blueprint('user', __name__)
 CORS(user_bp)
 
 @cross_origin()
-@user_bp.route('/create', methods=['POST'])
+@user_bp.route('/create', methods=['POST', 'OPTIONS'])
 def create_user() -> Tuple[Response, int]:
+    print(request)
     data = request.get_json()
 
     username = data.get('username')
@@ -27,7 +28,7 @@ def create_user() -> Tuple[Response, int]:
         user_service: UserService = current_app.extensions['user_service']
         try:
             user = user_service.create_user(username, password)
-        except IntegrityError or FileExistsError:
+        except (IntegrityError, FileExistsError):
             return ret_409()
         return jsonify({"message": "SUCCESS", "accessToken": user.access_token}), 200
     return ret_500()
