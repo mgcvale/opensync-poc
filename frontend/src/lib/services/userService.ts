@@ -1,6 +1,7 @@
 import { userStore, type LoginData, type UserData } from '../stores/userStore';
 import { CONFIG } from '../../config';
 import { CookieService } from './cookieService';
+import { type ApiResponse, createResponse, createErrorResponse, handleFetchException } from './requests';
 
 function isValidLoginResponse(responseData: unknown): responseData is { accessToken: string } {
     return typeof responseData === 'object' && responseData !== null && 'accessToken' in responseData;
@@ -11,7 +12,8 @@ function isValidTokenResponse(responseData: unknown): responseData is {accessTok
 }
 
 export class UserService {
-    async createUser(data: LoginData): Promise<UserData> {
+    async createUser(data: LoginData): Promise<ApiResponse<UserData | null>> {
+        let status: number = 0;
         try {
             const response = await fetch(CONFIG.getApiUrl("user/create"), {
                 method: "POST",
@@ -21,31 +23,29 @@ export class UserService {
                 },
             });
 
-            console.log("Response status:", response.status);
-            console.log("Response headers:", response.headers);
-
+            status = response.status;
 
             if (!response.ok) {
-                throw new Error("Response was not ok");
+                return createErrorResponse(status, await response.json().catch(() => null));
             }
 
             const responseData: unknown = await response.json() as {accessToken: string};
             if (!isValidLoginResponse(responseData)) {
-                throw Error("Invalid response from server");
+                return createErrorResponse(502, "Invalid response from server");
             }
 
-            return {
-                username: data.username,
-                accessToken: responseData.accessToken,
-                loggedIn: true
-            }
+            return createResponse(status, {
+                    username: data.username,
+                    accessToken: responseData.accessToken,
+                    loggedIn: true
+                });
         } catch (error) {
-            console.error("Error creating user: ", error);
-            throw error;
+            return handleFetchException(error, status);
         }
     }
 
-    async login(data: LoginData): Promise<UserData | null> {
+    async login(data: LoginData): Promise<ApiResponse<UserData | null>> {
+        let status: number = 0;
         try {
             const response = await fetch(CONFIG.getApiUrl("user/get_token"), {
                 method: "POST",
@@ -55,27 +55,29 @@ export class UserService {
                 }
             });
 
+            status = response.status;
+
             if (!response.ok) {
-                throw new Error("Response was not ok");
+                return createErrorResponse(status, await response.json().catch(() => null));
             }
 
             const responseData: unknown = await response.json() as {accessToken: string};
             if (!isValidLoginResponse(responseData)) {
-                throw Error("Invalid response from server");
+                return createErrorResponse(502, "Invalid response from server");
             }
 
-            return {
+            return createResponse(status, {
                 username: data.username,
                 accessToken: responseData.accessToken,
                 loggedIn: true
-            }
+            });
         } catch (error) {
-            console.error("Error logging in: ", error);
-            throw error;
+            return handleFetchException(error, status);
         }
     }
 
-    async deleteAccount(token: string): Promise<void> {
+    async deleteAccount(token: string): Promise<ApiResponse<null>> {
+        let status: number = 0;
         try {
             const response = await fetch(CONFIG.getApiUrl("user/delete"), {
                 method: "DELETE",
@@ -84,15 +86,16 @@ export class UserService {
                     "Authorization": `Bearer ${token}`
                 }
             });
+            status = response.status;
 
             if (!response.ok) {
-                throw new Error("Response was not ok");
+                return createErrorResponse(status, await response.json().catch(() => null));
             }
             // no need to parse response here
+            return createResponse(status, null);
         } catch (error) {
-            console.error("Error deleting user: ", error);
-            throw error;
-        } 
+            return handleFetchException(error, status);
+        }
     }
 
     loadTokenToCookie(token: string): void {
@@ -103,12 +106,13 @@ export class UserService {
         return CookieService.getCookie("accessToken");
     }
 
-    async getDataFromCookie(): Promise<UserData> {
+    async getDataFromCookie(): Promise<ApiResponse<UserData | null>> {
         const cookie: string | null = this.loadTokenFromCookie();
         if (cookie == null) {
-            throw new Error("Token cookie not set");
+            return createErrorResponse(-1, "No cookie");
         }
-
+        
+        let status: number = 0;
         try {
             const response = await fetch(CONFIG.getApiUrl("user/get"), {
                 method: "POST",
@@ -117,19 +121,27 @@ export class UserService {
                 }
             });
 
-            const data = await response.json() as {username: string, accessToken: string}
-            if (!isValidTokenResponse(data)) {
-                throw new Error("Invalid response from server");
+            status = response.status;
+            if (!response.ok) {
+                return createErrorResponse(status, await response.json().catch(() => null));
             }
 
-            return {
+            const data = await response.json() as {username: string, accessToken: string}
+            if (!isValidTokenResponse(data)) {
+                return createErrorResponse(502, "Invalid data from server");
+            }
+
+            return createResponse(status, {
                 accessToken: data.accessToken,
                 username: data.username,
                 loggedIn: true
-            }
-        } catch (exception) {
-            console.error("Error logging in from cookie: ", exception);
-            throw exception;
+            });
+        } catch (error) {
+            return handleFetchException(error, status);
         }
     }
+}
+
+export function isUserData(data: any): data is UserData {
+    return data !== null && typeof data.accessToken === 'string';
 }

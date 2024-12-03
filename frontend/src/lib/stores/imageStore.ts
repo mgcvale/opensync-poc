@@ -4,6 +4,6 @@ export interface ImageData {
     images: string[],
 }
 
-export const userStore = writable<ImageData>({
+export const imageStore = writable<ImageData>({
     images: []
 });

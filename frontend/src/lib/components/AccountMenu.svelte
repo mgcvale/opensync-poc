@@ -2,6 +2,7 @@
     import { userStore, type UserData } from "$lib/stores/userStore";
     import { UserService } from "$lib/services/userService";
     import Dropdown from "./Dropdown.svelte";
+    import { goto } from "$app/navigation";
 
     let userService: UserService = new UserService();
 
@@ -16,8 +17,10 @@
         }
         try {
             userService.deleteAccount($userStore.accessToken);
+            userService.loadTokenToCookie($userStore.accessToken);
         } catch (e) {
             alert("Error deleting user! " + e);
+            goto('/');
         }
     }
 
@@ -27,8 +30,9 @@
 
 {#snippet rows(className: string)}
     {#if $userStore.loggedIn}
-        <a href="/" id="logout" role="button" onclick={(e) => logout()}>Log out</a>
-        <a href="/" id="delete" role="button" onclick={(e) => deleteAccount()} style="color: brown">Delete account</a>
+        <p>{$userStore.username}</p>
+        <a href="/user/login" id="logout" role="button" onclick={(e) => logout()}>Log out</a>
+        <a href="/user/register" id="delete" role="button" onclick={(e) => deleteAccount()} style="color: brown">Delete account</a>
     {:else}
         <a href="/user/register" id="create-account">Create account</a>
         <a href="/user/login" id="login">Log in</a>
@@ -78,9 +82,10 @@
         }
         
         :global(.dropdown-content) {
+            backdrop-filter: blur(2px);
             border-radius: 12px;
             border: 2px solid var.$content-border;
-            :global(a), :global(button) {
+            :global(a), :global(button), {
                 cursor: pointer;
                 padding: .5em .7em;
                 border-radius: 6px;
@@ -94,6 +99,11 @@
                 @media (max-width: 768px) {
                     text-decoration: underline;
                 }
+            }
+
+            :global(> *:not(a, button)) {
+                padding: .5em .7em;
+                border-radius: 6px;
             }
             background-color: transparent;
         }    

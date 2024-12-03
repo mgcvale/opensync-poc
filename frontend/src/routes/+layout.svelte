@@ -1,7 +1,8 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { userStore, type UserData } from "$lib/stores/userStore";
-    import { UserService } from "$lib/services/userService";
+    import { isUserData, UserService } from "$lib/services/userService";
+    import type { ApiResponse } from '$lib/services/requests';
 
     let { children } = $props();
 
@@ -10,12 +11,16 @@
         if ($userStore.loggedIn) {
             return;
         }
-        try {
-            let userData = await userService.getDataFromCookie();
-            userStore.set(userData);
+        
+        const response: ApiResponse<UserData | null> = await userService.getDataFromCookie();
+        if (response.success && isUserData(response.data)) {
+            userStore.set(response.data);
             console.log("Loaded user " + $userStore.username);
-        } catch (e) {
-            console.log("User not loaded from cookie!");
+        } else {
+            console.log("Error loading user: " + response.status);
+            if (response.error !== "No cookie" && response.status != 400) {
+                alert("There was an error loading your account! You may re-login or check yout internet connection to use the service.");
+            }
         }
     });
 </script>

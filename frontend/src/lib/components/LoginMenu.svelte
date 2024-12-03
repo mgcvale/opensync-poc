@@ -1,30 +1,43 @@
 <script lang="ts">
     import '/src/style/forms.scss';
-    import { userStore } from '$lib/stores/userStore';
-    import { UserService } from '$lib/services/userService';
+    import { userStore, type UserData } from '$lib/stores/userStore';
+    import { isUserData, UserService } from '$lib/services/userService';
     import { goto } from '$app/navigation';
+    import { type ApiResponse } from '$lib/services/requests';
+    import Page from '../../routes/+page.svelte';
+    import { error } from '@sveltejs/kit';
 
     let { mode = $bindable() } = $props();
     let username: string = $state("");
     let password: string = $state("");
+    let errorMsg: string | null = $state(null);
 
     const userService: UserService = new UserService();
 
     let onclick = async (e: Event) => {
         e.preventDefault();
-        try {
-            let userData = await userService.login({username: username, password: password});
-            if (userData == null) {
-                alert("Error logging in: userData is null");
-                userStore.set({username: "", accessToken: "", loggedIn:false})
-                throw new Error("userData is null!");
-            }
+        let response: ApiResponse<UserData | null> = await userService.login({username: username, password: password});
+        if (response.success && isUserData(response.data)) {
+            let userData = response.data;
             userService.loadTokenToCookie(userData.accessToken);
             userStore.set(userData);
             goto('/');
-        } catch (e) {
-            alert("Exception occoured! check your credentials: " + e);
-            userStore.set({username: "", accessToken: "", loggedIn:false})
+        } else {
+            console.log(response.status);
+            errorMsg = {
+                400: `You left one or more fields empty.`,
+                405: `An error occourred on our end. Error code: 405`,
+                404: `An error occourred on our end. Error code: 404`,
+                401: `Invalid username or password.`,
+                403: `You are blocked from accessing this service.`,
+                409: `An error occoured on our end. Error code: 409`,
+                500: `An error occoured with our provider. Error code: 500`,
+                502: `An invalid response was sent by our provider. Error code: 502`,
+                503: `The login service is unavaliable. Check your internet connection.`
+            }[response.status] || `An unknown error occoured. Error code: ${response.status}`
+            setInterval(() => {
+                errorMsg = null;
+            }, 10000)
         }
     }
 </script>
@@ -40,4 +53,7 @@
     </div>
     <button {onclick}>Log in</button>
 </form>
+{#if errorMsg}
+<p class="error">{errorMsg}</p>
+{/if}
 <a href="/user/register" onclick={() => mode = "register"}>Register instead</a>
