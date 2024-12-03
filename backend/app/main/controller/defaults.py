@@ -1,4 +1,3 @@
-
 from typing import Tuple
 from flask import Response, jsonify
 

@@ -4,7 +4,7 @@ import string
 import os
 from io import BytesIO
 from flask_cors import cross_origin, CORS
-from defaults import *
+from app.main.controller.defaults import *
 from PIL import Image
 import re
 
