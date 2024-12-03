@@ -1,5 +1,5 @@
-import { userStore, type LoginData, type UserData } from './stores/userStore';
-import { CONFIG } from '../config';
+import { userStore, type LoginData, type UserData } from '../stores/userStore';
+import { CONFIG } from '../../config';
 import { CookieService } from './cookieService';
 
 function isValidLoginResponse(responseData: unknown): responseData is { accessToken: string } {

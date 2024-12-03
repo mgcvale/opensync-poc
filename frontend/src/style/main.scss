@@ -1,8 +1,14 @@
+@use 'var.scss';
+
 header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.5em 1em;
+    padding: 0.8em 1em;
+
+    a {
+        gap: 0 !important;
+    }
 
     div, a {
         text-decoration: none;
@@ -40,6 +46,8 @@ header {
             padding-top: 0.5em;
             padding-bottom: 0.5em;
             height: 2.5em;
+            width: 2.5em;
+            align-self: left;
         }
     }
 }
@@ -51,5 +59,40 @@ header {
     justify-content: center;
     .floating-content {
         margin: auto;
+        background-color: var.$content-bg;
+        border: 2px solid var.$content-border;
+        padding: 2em;
+        border-radius: 16px;
+        box-shadow: 0px 0px 24px 0px rgba(0,0,10,0.15);
     }
+}
+
+.content {
+    height: calc(100vh - 6em);
+    margin: 1em;
+    background-color: var.$content-bg;
+    border: 2px solid var.$content-border ;
+    border-radius: 16px;
+    box-shadow: 0px 0px 24px 0px rgba(0,0,10,0.15);
+    padding: 1em 1.2em;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+input[type="text"], input[type="password"] {
+    background-color: var.$bg;
+    border: 1.5px solid var.$content-border;
+    border-radius: .5em;
+    padding: .2em;
+}
+
+button {
+    font-size: 0.9em;
+    background-color: var.$bg;
+    border: 2px solid var.$content-border;
+    border-radius: .5em;
+    padding: .5em 1.5em;
+    cursor: pointer;
 }

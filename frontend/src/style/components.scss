@@ -1,6 +1,8 @@
 .dropdown {
     display: inline-block;
     cursor: pointer;
+    padding: 0;
+    font-size: 1em;
 
     .dropdown-content {
         cursor:default;

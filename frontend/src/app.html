@@ -13,5 +13,29 @@
 	</head>
 	<body data-sveltekit-preload-data="hover">
 		<div style="display: contents">%sveltekit.body%</div>
+		<canvas id="noiseCanvas"></canvas>
 	</body>
 </html>
+<script>
+	const canvas = document.getElementById("noiseCanvas");
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width = window.innerWidth;
+    const height = canvas.height = window.innerHeight;
+
+    function generateSoftNoise() {
+      const imageData = ctx.createImageData(width, height);
+      const data = imageData.data;
+      
+      for (let i = 0; i < data.length; i += 4) {
+        const color = Math.random() * 255;
+        const alpha = Math.random() * 0.1 + 0.05;
+
+        data[i] = data[i + 1] = data[i + 2] = color; 
+        data[i + 3] = alpha * 255;
+      }
+
+      ctx.putImageData(imageData, 0, 0);
+    }
+
+    generateSoftNoise();
+</script>

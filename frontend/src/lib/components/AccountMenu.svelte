@@ -1,6 +1,25 @@
 <script lang='ts'>
     import { userStore, type UserData } from "$lib/stores/userStore";
+    import { UserService } from "$lib/services/userService";
     import Dropdown from "./Dropdown.svelte";
+
+    let userService: UserService = new UserService();
+
+    function logout() {
+        userStore.set({ username: "", accessToken: "", loggedIn: false });
+        userService.loadTokenToCookie($userStore.accessToken);
+    }
+
+    function deleteAccount() {
+        if (!confirm("Do you really want to delete your account? All your images will be deleted with it.")) {
+            return;
+        }
+        try {
+            userService.deleteAccount($userStore.accessToken);
+        } catch (e) {
+            alert("Error deleting user! " + e);
+        }
+    }
 
     let open: boolean = $state(false);
 
@@ -8,7 +27,8 @@
 
 {#snippet rows(className: string)}
     {#if $userStore.loggedIn}
-        <a id="logout">Log out</a>
+        <a href="/" id="logout" role="button" onclick={(e) => logout()}>Log out</a>
+        <a href="/" id="delete" role="button" onclick={(e) => deleteAccount()} style="color: brown">Delete account</a>
     {:else}
         <a href="/user/register" id="create-account">Create account</a>
         <a href="/user/login" id="login">Log in</a>
@@ -60,9 +80,12 @@
         :global(.dropdown-content) {
             border-radius: 12px;
             border: 2px solid var.$content-border;
-            :global(a) {cursor: pointer;
+            :global(a), :global(button) {
+                cursor: pointer;
                 padding: .5em .7em;
                 border-radius: 6px;
+                border: none;
+
 
                 &:hover {
                     background-color: rgba(0, 0, 0, 0.6);

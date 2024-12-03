@@ -2,9 +2,12 @@
     import '/src/reset.scss';
     import '/src/style/scrollless.scss';
     import { userStore, type UserData } from '$lib/stores/userStore';
+    import LoginMenu from '$lib/components/LoginMenu.svelte';
+    import RegisterMenu from '$lib/components/RegisterMenu.svelte';
 
     let { data } = $props();
-    let mode = data.slug;
+    let mode = $state(data.slug);
+
 
 </script>
 
@@ -27,7 +30,7 @@
         <span>/</span>
         <h2>
             {mode}
-        </h2>        
+        </h2>
     </div>
     <a href="/">
         &lt;- Back to Dashboard
@@ -36,6 +39,19 @@
 
 <main class="floating-content-container">
     <div class="floating-content">
-        <h2>{mode}</h2>
+        <h2>{mode.charAt(0).toUpperCase() + mode.slice(1)}</h2>
+        {#if mode == "register"}
+        <RegisterMenu bind:mode={mode}></RegisterMenu>
+        {:else if mode == "login"}
+        <LoginMenu bind:mode={mode}></LoginMenu>
+        {:else}
+        <h3>What are you doing here?!</h3>
+        <a href="/user/login" onclick={() => mode = "register"}>Go to login page</a>
+        {/if}
+        {#if $userStore.loggedIn}
+        <p style="font-size: .8em; color: brown; text-align: center">
+            Warning: you are already logged in! Re-logging in will log you out of your current '{$userStore.username}' account.
+        </p>
+        {/if}
     </div>
 </main>

@@ -10,11 +10,25 @@
 
     font-family: 'Roboto Mono';
 
-    background-color: var.$bg;
     color: var.$fg;
     fill: var.$fg;
 }
 
+#noiseCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.13;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+body {
+    background-color: var.$bg;
+}
 
 @media (max-width: 768px) {
     :root {
