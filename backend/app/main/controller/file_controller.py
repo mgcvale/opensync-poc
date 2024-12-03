@@ -20,7 +20,7 @@ def is_valid_filename(filename: str) -> bool:
     return re.match(r'^[a-zA-Z0-9_\-\.]+$', filename) is not None
 
 @cross_origin
-@file_bp.route('/images/upload', methods = ["POST"])
+@file_bp.route('/upload', methods = ["POST"])
 def upload_image():
 
     auth_header = request.headers.get('Authorization')
@@ -62,7 +62,7 @@ def upload_image():
     return jsonify({"message": "succes", "filename": filename}), 200
 
 @cross_origin
-@file_bp.route('/images/<image_name>', methods=["GET"])
+@file_bp.route('/<image_name>', methods=["GET"])
 def serve_image(image_name):
     auth_header = request.headers.get('Authorization')
     if auth_header and auth_header.startswith("Bearer "):
@@ -88,7 +88,7 @@ def serve_image(image_name):
         return send_file(filepath, mimetype="image/jpeg")
 
 @cross_origin
-@file_bp.route('/images/preview/<image_name>', methods=["GET"])
+@file_bp.route('/preview/<image_name>', methods=["GET"])
 def serve_preview(image_name):
     auth_header = request.headers.get('Authorization')
     if auth_header and auth_header.startswith("Bearer "):
@@ -126,7 +126,7 @@ def serve_preview(image_name):
     )
 
 @cross_origin
-@file_bp.route('/images/delete/<image_name>', methods=["DELETE"])
+@file_bp.route('/delete/<image_name>', methods=["DELETE"])
 def delete_image(image_name):
     auth_header = request.headers.get('Authorization')
     if auth_header and auth_header.startswith("Bearer "):
@@ -157,7 +157,7 @@ def delete_image(image_name):
         return jsonify({'message': 'File not found'}), 404
 
 @cross_origin
-@file_bp.route("/images/all", methods=["GET"])
+@file_bp.route("/all", methods=["GET"])
 def get_all_images():
     auth_header = request.headers.get('Authorization')
     if auth_header and auth_header.startswith("Bearer "):

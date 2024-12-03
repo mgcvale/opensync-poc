@@ -6,3 +6,6 @@ CORS(main_bp)
 
 from app.main.controller.user_controller import user_bp
 main_bp.register_blueprint(user_bp, url_prefix='/user')
+
+from app.main.controller.file_controller import file_bp
+file_bp.register_blueprint(image_bp, url_prefix='/image')
