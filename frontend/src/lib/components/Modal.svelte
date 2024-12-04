@@ -35,9 +35,6 @@
 			{@render children?.()}
 		</div>
 		<!-- svelte-ignore a11y_autofocus -->
-		<div class="actions-div">
-			<button autofocus onclick={() => showingModal = false}>{closeMessage}</button>
-		</div>
 	</dialog>
 </div>
 
@@ -78,6 +75,8 @@
 		pointer-events: auto;
 		transform: scale(0.93);
 		margin: auto;
+		min-width: 200px;
+		max-width: 90%;
 
 		opacity: 0;
         transform: scale(0.7);
@@ -96,15 +95,6 @@
             opacity: 0;
             transform: scale(0.7);
         }
-
-		> .actions-div {
-			> button {
-				background-color: lighten(var.$content-bg, 10%);
-			}
-
-			direction: rtl;
-
-		}
 	}
 }
 </style>

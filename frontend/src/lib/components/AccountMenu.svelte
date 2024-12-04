@@ -3,12 +3,14 @@
     import { UserService } from "$lib/services/userService";
     import Dropdown from "./Dropdown.svelte";
     import { goto } from "$app/navigation";
+    import { imageStore } from "$lib/stores/imageStore";
 
     let userService: UserService = new UserService();
 
     function logout() {
         userStore.set({ username: "", accessToken: "", loggedIn: false });
         userService.loadTokenToCookie($userStore.accessToken);
+        imageStore.set({images: []});
     }
 
     function deleteAccount() {
@@ -82,18 +84,19 @@
         }
         
         :global(.dropdown-content) {
-            backdrop-filter: blur(2px);
+            backdrop-filter: blur(5px);
+            background-color: rgba(0, 0, 0, 0.2) !important;
             border-radius: 12px;
             border: 2px solid var.$content-border;
+
             :global(a), :global(button) {
                 cursor: pointer;
                 padding: .5em .7em;
                 border-radius: 6px;
                 border: none;
 
-
                 &:hover {
-                    background-color: rgba(0, 0, 0, 0.6);
+                    background-color: rgba(0, 0, 0, 0.4);
                 }
 
                 @media (max-width: 768px) {
