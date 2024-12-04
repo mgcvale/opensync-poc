@@ -1,6 +1,7 @@
 <script lang="ts">
     import AccountMenu from "$lib/components/AccountMenu.svelte";
     import ImageGallery from "$lib/components/ImageGallery.svelte";
+    import ImageUploadForm from "$lib/components/ImageUploadForm.svelte";
     import '/src/reset.scss';
     import '/src/style/scrollless.scss';
 </script>
@@ -26,5 +27,6 @@
 </header>
 
 <main>
-    <ImageGallery></ImageGallery>
+    <ImageGallery>
+    </ImageGallery>
 </main>

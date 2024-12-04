@@ -85,7 +85,7 @@
             backdrop-filter: blur(2px);
             border-radius: 12px;
             border: 2px solid var.$content-border;
-            :global(a), :global(button), {
+            :global(a), :global(button) {
                 cursor: pointer;
                 padding: .5em .7em;
                 border-radius: 6px;

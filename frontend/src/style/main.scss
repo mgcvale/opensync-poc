@@ -88,6 +88,18 @@ input[type="text"], input[type="password"] {
     padding: .2em;
 }
 
+input[type="file"] {
+    &::file-selector-button {
+        font-size: 1.1em;
+        color: var.$fg;
+        background-color: var.$bg;
+        border: 2px solid var.$content-border;
+        border-radius: .5em;
+        padding: .5em 1.5em;
+        cursor: pointer;
+    }
+}
+
 button {
     font-size: 0.9em;
     background-color: var.$bg;
@@ -95,4 +107,5 @@ button {
     border-radius: .5em;
     padding: .5em 1.5em;
     cursor: pointer;
+    transition: 200ms;
 }
